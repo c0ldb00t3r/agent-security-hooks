@@ -9,7 +9,7 @@ import click
 
 from .validator import SecurityValidator
 from .logger import AuditLogger, get_environment_context, redact_sensitive_data, truncate_text
-from .adapters import ClaudeAdapter, CursorAdapter, GeminiAdapter
+from .adapters import ClaudeAdapter, CursorAdapter, GeminiAdapter, VSCodeAdapter
 
 # Security constants
 MAX_INPUT_SIZE = 1024 * 1024  # 1MB max input size
@@ -40,6 +40,8 @@ def detect_platform() -> str | None:
         return "claude"
     if os.environ.get("CURSOR_PROJECT_DIR") or os.environ.get("CURSOR_VERSION"):
         return "cursor"
+    if os.environ.get("VSCODE_PID") or os.environ.get("VSCODE_IPC_HOOK_CLI"):
+        return "vscode"
     # Gemini CLI doesn't set specific env vars, so it must be explicit
     return None
 
@@ -69,7 +71,7 @@ def get_config_path() -> Path | None:
 @click.command()
 @click.option(
     "--platform", "-p",
-    type=click.Choice(["claude", "cursor", "gemini"]),
+    type=click.Choice(["claude", "cursor", "gemini", "vscode"]),
     help="AI platform (auto-detected if not specified)",
 )
 @click.option(
@@ -147,6 +149,7 @@ def main(
         "claude": ClaudeAdapter,
         "cursor": CursorAdapter,
         "gemini": GeminiAdapter,
+        "vscode": VSCodeAdapter,
     }
     adapter_class = adapters[platform]
     adapter = adapter_class(validator=validator, logger=logger, debug=debug)
