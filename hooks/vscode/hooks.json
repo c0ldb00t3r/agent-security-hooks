@@ -1,0 +1,61 @@
+{
+  "_comment": "VS Code Copilot Agent hook configuration for Agent Security Hooks. Place or symlink at .github/hooks/agent-security-hooks.json in your workspace.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event PreToolUse",
+        "timeout": 10
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event PostToolUse",
+        "timeout": 5
+      }
+    ],
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event SessionStart",
+        "timeout": 5
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event Stop",
+        "timeout": 5
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event UserPromptSubmit",
+        "timeout": 5
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event SubagentStart",
+        "timeout": 5
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event SubagentStop",
+        "timeout": 5
+      }
+    ],
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": "agent-security-hooks --platform vscode --event PreCompact",
+        "timeout": 5
+      }
+    ]
+  }
+}
