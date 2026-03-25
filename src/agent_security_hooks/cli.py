@@ -40,9 +40,8 @@ def detect_platform() -> str | None:
         return "claude"
     if os.environ.get("CURSOR_PROJECT_DIR") or os.environ.get("CURSOR_VERSION"):
         return "cursor"
-    if os.environ.get("VSCODE_PID") or os.environ.get("VSCODE_IPC_HOOK_CLI"):
-        return "vscode"
-    # Gemini CLI doesn't set specific env vars, so it must be explicit
+    # Gemini and VS Code do not set hook-specific env vars;
+    # --platform must be passed explicitly for both.
     return None
 
 
