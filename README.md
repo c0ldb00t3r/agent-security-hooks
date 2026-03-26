@@ -178,6 +178,37 @@ mkdir -p .gemini
 cp hooks/gemini/settings.json .gemini/
 ```
 
+#### VS Code (GitHub Copilot Agent)
+ 
+Copy the hook configuration to your workspace:
+ 
+```bash
+mkdir -p .github/hooks
+cp hooks/vscode/hooks.json .github/hooks/agent-security-hooks.json
+```
+ 
+Or add to an existing `.github/hooks/*.json` file:
+ 
+```json
+{
+  "hooks": {
+    "PreToolUse": [{
+      "type": "command",
+      "command": "agent-security-hooks --platform vscode --event PreToolUse",
+      "timeout": 10
+    }],
+    "PostToolUse": [{
+      "type": "command",
+      "command": "agent-security-hooks --platform vscode --event PostToolUse",
+      "timeout": 5
+    }]
+  }
+}
+```
+ 
+> **Note:** VS Code ignores hook matchers — all hooks fire for every tool invocation regardless of tool name.
+ 
+
 ### 3. Test It
 
 Try running a blocked command in your AI tool:
