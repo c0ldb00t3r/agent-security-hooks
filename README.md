@@ -32,6 +32,8 @@ A Python-based security monitoring system that integrates with AI coding assista
 | **Claude Code** | `.claude/settings.json` | [code.claude.com/docs/en/hooks](https://code.claude.com/docs/en/hooks) |
 | **Cursor** | `.cursor/hooks.json` | [cursor.com/docs/agent/hooks](https://cursor.com/docs/agent/hooks) |
 | **Gemini CLI** | `.gemini/settings.json` | [geminicli.com/docs/hooks](https://geminicli.com/docs/hooks/) |
+| **Gemini CLI** | `.gemini/settings.json` | [geminicli.com/docs/hooks](https://geminicli.com/docs/hooks/) |
+| **VS Code** | `.github/hooks/*.json` | [code.visualstudio.com/docs/copilot/agent-hooks](https://code.visualstudio.com/docs/copilot/agent-hooks) |
 
 ## Features
 
@@ -39,7 +41,7 @@ A Python-based security monitoring system that integrates with AI coding assista
 - **File Protection** - Prevent access to sensitive files (`.env`, `secrets/`, `*.pem`, etc.)
 - **Confirmation Prompts** - Require approval for risky operations (`kubectl apply`, `git push`, etc.)
 - **Audit Logging** - JSON Lines logs for compliance and forensics
-- **Multi-Platform** - Single tool works with Claude Code, Cursor, and Gemini CLI
+- **Multi-Platform** - Single tool works with Claude Code, Cursor, Gemini CLI, and VS Code (Copilot Agent)
 - **Security-First Design** - Fail-closed on errors and anti-obfuscation rules over `sh` and `eval`.
 
 ## Architecture
@@ -88,7 +90,7 @@ A Python-based security monitoring system that integrates with AI coding assista
 
 - **Python 3.10+**
 - **pip** (or another Python package installer)
-- One of: [Claude Code](https://code.claude.com/), [Cursor](https://cursor.com/), or [Gemini CLI](https://geminicli.com/) (for hook integration)
+- One of: [Claude Code](https://code.claude.com/), [Cursor](https://cursor.com/), [Gemini CLI](https://geminicli.com/), or [VS Code with GitHub Copilot](https://code.visualstudio.com/) (for hook integration)
 
 ### From Source
 
@@ -263,7 +265,7 @@ grep '"decision":"block"' ~/.agent-security-hooks/logs/*.jsonl | jq .
 agent-security-hooks [OPTIONS]
 
 Options:
-  -p, --platform [claude|cursor|gemini]  AI platform (auto-detected if not specified)
+  -p, --platform [claude|cursor|gemini|vscode]  AI platform (auto-detected if not specified)
   -e, --event TEXT                       Hook event type (required)
   -c, --config PATH                      Path to blacklist.yaml
   -l, --log-dir PATH                     Directory for audit logs
@@ -278,6 +280,7 @@ Options:
 | Claude Code | `pre`, `post`, `prompt` |
 | Cursor | `before-shell`, `after-shell`, `before-read`, `after-edit`, `session-start`, `session-end` |
 | Gemini CLI | `before`, `after`, `session_start` |
+| VS Code | `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, `UserPromptSubmit`, `SubagentStart`, `SubagentStop`, `PreCompact` |
 
 ## Exit Codes
 
@@ -394,12 +397,14 @@ agent-security-hooks/
 │       ├── claude.py     # Claude Code adapter
 │       ├── cursor.py     # Cursor adapter
 │       └── gemini.py     # Gemini CLI adapter
+│       └── vscode.py     # VS Code Copilot Agent adapter
 ├── config/
 │   └── blacklist.yaml    # Security rules
 ├── hooks/
 │   ├── claude/           # Claude Code config
 │   ├── cursor/           # Cursor config
 │   └── gemini/           # Gemini CLI config
+|   └── vscode/           # VS Code config
 ├── tests/
 └── logs/                 # Audit logs (gitignored)
 ```
@@ -454,6 +459,7 @@ Rules with `action: ask` in `blacklist.yaml` require confirmation before executi
 - **Claude Code**: Shows an **interactive permission dialog**. Users can approve to proceed or deny to block. This is the only platform with true interactive confirmation.
 - **Cursor**: **Treats "ask" as a hard block** with a denial message prefixed with "⚠️ Confirmation required:". Operations are blocked, and users must manually approve or modify commands and retry. The message helps distinguish review-needed operations from hard blocks.
 - **Gemini CLI**: **Treats "ask" as a hard block**. Operations are denied with a "Confirmation required:" message, and users must manually modify/approve commands.
+- **VS Code**: **Treats "ask" as a hard block** with a denial message prefixed with "⚠️ Confirmation required:". Behaves identically to Cursor — operations are blocked and users must manually approve or modify commands and retry.
 
 **Why the limitation?** Both Cursor and Gemini CLI's hook protocols only support `allow` or `deny` decisions—there is no native "ask for confirmation" decision type. Only Claude Code's hook protocol supports interactive permission dialogs with `permissionDecision: "ask"`.
 
@@ -482,4 +488,5 @@ Apache License 2.0 - See [LICENSE](LICENSE) for details.
 - [Claude Code Hooks](https://code.claude.com/docs/en/hooks)
 - [Cursor Hooks](https://cursor.com/docs/agent/hooks)
 - [Gemini CLI Hooks](https://geminicli.com/docs/hooks/)
+- [VS Code Copilot Agent Hooks](https://code.visualstudio.com/docs/copilot/agent-hooks)
 
