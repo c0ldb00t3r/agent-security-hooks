@@ -179,12 +179,20 @@ cp hooks/gemini/settings.json .gemini/
 ```
 
 #### VS Code (GitHub Copilot Agent)
+
+VS Code loads .claude/settings.json and ~/.claude/settings.json by default. 
+<img width="846" height="430" alt="image" src="https://github.com/user-attachments/assets/daf8e147-877f-46d2-8d84-ece3e55ef86e" />
+
  
 Copy the hook configuration to your workspace:
  
 ```bash
+# Project-level
 mkdir -p .github/hooks
-cp hooks/vscode/hooks.json .github/hooks/agent-security-hooks.json
+cp hooks/vscode/hooks.json .github/hooks/
+# User-level
+mkdir -p ~/.copilot/hooks
+cp hooks/vscode/hooks.json ~/.copilot/hooks/
 ```
  
 Or add to an existing `.github/hooks/*.json` file:
